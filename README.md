@@ -13,7 +13,6 @@ Set the optional environment variables (This example is Linux based);
 
 ```go
 export wallboxPort=<Port on which your TCP/modbus listens. Default is 502>
-export metricsPort=<Port on which the metrics are shown. Default is 8080>
 ```
 
 Basic usage:
@@ -32,6 +31,6 @@ http://localhost:8080/metrics
 How to build your own version ?
 
 ```go
-GOOS=windows GOARCH=amd64 go build -o keba-prometheus.exe keba-prometheus.go
-GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o keba-prometheus.linux keba-prometheus.go
+GOOS=windows GOARCH=amd64 go build -o ./bin/keba-prometheus.exe keba-prometheus.go
+GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o ./bin/keba-prometheus.linux keba-prometheus.go
 ```

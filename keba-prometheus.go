@@ -13,10 +13,12 @@ import (
 	"time"
 )
 
+const metricsPort = "8080"
+
 type environment struct {
 	wallboxName string
 	wallboxPort int
-	metricsPort string
+	debug       bool
 }
 
 type register struct {
@@ -143,6 +145,8 @@ var (
 
 func initRegisters() {
 
+	log.Debug().Msg("Init registers")
+
 	registers = append(registers, register{id: 1000, description: "charing_state", value: 0})
 	registers = append(registers, register{id: 1004, description: "cable_state", value: 0})
 	registers = append(registers, register{id: 1006, description: "error_code", value: 0})
@@ -220,17 +224,31 @@ func main() {
 		}
 	}()
 
-	log.Fatal().Err(http.ListenAndServe(":"+env.metricsPort, nil))
+	log.Info().Msg("Find metrics on http://<your IP>:" + metricsPort + "/metrics (Not for usage in a container image!)")
+	log.Fatal().Err(http.ListenAndServe(":"+metricsPort, nil))
 
 }
 
 func initApp() {
 
 	zerolog.TimeFieldFormat = zerolog.TimeFormatUnix
+	zerolog.SetGlobalLevel(zerolog.InfoLevel)
 
 	initEnvironmentVariables()
-	initRegisters()
 
+	if env.debug {
+		zerolog.SetGlobalLevel(zerolog.DebugLevel)
+		log.Debug().Msg("Debug level activated.")
+	}
+
+	initRegisters()
+	initPrometheusRegisters()
+
+}
+
+func initPrometheusRegisters() {
+
+	log.Debug().Msg("Init prometheus registers")
 	prometheus.MustRegister(charingState)
 	prometheus.MustRegister(cableState)
 	prometheus.MustRegister(errorCode)
@@ -257,12 +275,12 @@ func initEnvironmentVariables() {
 	log.Info().Msg("Usage:")
 	log.Info().Str("wallboxPort", "This is an IP or a servername.").Msg("Mandatory environment parameter.")
 	log.Info().Str("wallboxPort", strconv.Itoa(modbusclient.MODBUS_PORT)).Msg("Optional: The port TCP/modbus listens.")
-	log.Info().Str("metricsPort", "8080").Msg("Optional:  The port on which metrics are shown. URL is http://<my Server>:<metricPort>/metrics, eg. http://localhost:8080/metrics")
+	log.Info().Str("debug", "false").Msg("Optional: Use debug mode for logging (true | false ). ")
 
 	env.wallboxName = getEnv("wallboxName", "")
 
 	if len(env.wallboxName) == 0 {
-		log.Fatal().Msg("The environment variable wallboxPort is unset. Please fix this.")
+		log.Fatal().Msg("The environment variable wallboxName is unset. Please fix this.")
 	}
 
 	portString := getEnv("wallboxPort", strconv.Itoa(modbusclient.MODBUS_PORT))
@@ -273,11 +291,16 @@ func initEnvironmentVariables() {
 		log.Fatal().Err(err).Str("wallboxPort", portString)
 	}
 
-	env.metricsPort = getEnv("metricsPort", "8080")
+	debug := getEnv("debug", "false")
+	env.debug, err = strconv.ParseBool(debug)
+
+	if err != nil {
+		log.Fatal().Err(err).Str("debug", debug)
+	}
 
 	log.Info().Str("wallboxName", env.wallboxName).Msg("This is the configured wallboxName.")
 	log.Info().Str("wallboxPort", strconv.Itoa(env.wallboxPort)).Msg("This is the configured port TCP/modbus listens.")
-	log.Info().Str("metricsPort", env.metricsPort).Msg("This is the configured port on which metrics are shown.")
+	log.Info().Str("debug", strconv.FormatBool(env.debug)).Msg("Log debug mode.")
 
 }
 
@@ -291,8 +314,7 @@ func getEnv(key, fallback string) string {
 
 func updateRegisterData() {
 
-	// turn on the debug trace option, to see what is being transmitted
-	trace := false
+	log.Debug().Msg("updateRegisterData")
 
 	conn, err := modbusclient.ConnectTCP(env.wallboxName, env.wallboxPort)
 	if err != nil {
@@ -300,7 +322,8 @@ func updateRegisterData() {
 	}
 
 	for i, register := range registers {
-		registers[i] = readRegister(conn, register, trace)
+		log.Debug().Str("id", string(registers[i].id)).Str("value", string(registers[i].value))
+		registers[i] = readRegister(conn, register)
 		log.Debug().Str("id", string(registers[i].id)).Str("value", string(registers[i].value))
 		time.Sleep(1 * time.Second)
 	}
@@ -309,13 +332,15 @@ func updateRegisterData() {
 
 }
 
-func readRegister(conn net.Conn, register register, trace bool) register {
+func readRegister(conn net.Conn, register register) register {
 
 	// attempt to read one (0x01) holding registers starting at address 200
 	readData := make([]byte, 3)
 	readData[0] = byte(register.id >> 8)   // (High Byte)
 	readData[1] = byte(register.id & 0xff) // (Low Byte)
 	readData[2] = 0x01
+
+	trace := zerolog.GlobalLevel() == zerolog.DebugLevel
 
 	// make this read request transaction id 1, with a 300 millisecond tcp timeout
 	readResult, readErr := modbusclient.TCPRead(conn, 300, 1, modbusclient.FUNCTION_READ_HOLDING_REGISTERS, false, 0x00, readData, trace)
