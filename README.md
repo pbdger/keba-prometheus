@@ -1,5 +1,5 @@
 # Keba-Prometheus image
-Provides Prometheus Metric for a Kuba Wallbox as container image.
+Provides Prometheus Metric for a Keba Wallbox as container image.
 
 ### How to start ?
 Start your container binding the external port 8080.
