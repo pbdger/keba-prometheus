@@ -30,7 +30,7 @@ type register struct {
 var (
 	charingState = prometheus.NewGauge(prometheus.GaugeOpts{
 		Namespace: "keba",
-		Name:      "charing_state",
+		Name:      "charging_state",
 		Help:      "The register 1000 contains the state of the charging station.",
 	})
 
