@@ -74,7 +74,7 @@ var (
 	totalEnergyCounterWh = prometheus.NewGauge(prometheus.GaugeOpts{
 		Namespace: "keba",
 		Name:      "total_energy_counter_Wh",
-		Help:      "The register 1036 contains the active power in milliwatts.",
+		Help:      "The register 1036 contains the active power in Wh.",
 	})
 
 	powerFactorPercent = prometheus.NewGauge(prometheus.GaugeOpts{
@@ -197,7 +197,7 @@ func main() {
 				case 1020:
 					activePowerMW.Set(float64(register.value))
 				case 1036:
-					totalEnergyCounterWh.Set(float64(register.value))
+					totalEnergyCounterWh.Set(float64(register.value) / 10)
 				case 1046:
 					powerFactorPercent.Set(float64(register.value))
 				case 1100:
