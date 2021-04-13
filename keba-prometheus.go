@@ -95,9 +95,9 @@ var (
 			"of the charging station. This value represents the minimum of the DIP switch settings, cable coding" +
 			" and temperature monitoring function.",
 	})
-	chargedEnergy = prometheus.NewGauge(prometheus.GaugeOpts{
+	chargedEnergyWh = prometheus.NewGauge(prometheus.GaugeOpts{
 		Namespace: "keba",
-		Name:      "charged_energy",
+		Name:      "charged_energy_Wh",
 		Help:      "The register 1502 contains the transferred energy of the current charging session.",
 	})
 
@@ -147,7 +147,7 @@ func initRegisters() {
 
 	log.Debug().Msg("Init registers")
 
-	registers = append(registers, register{id: 1000, description: "charing_state", value: 0})
+	registers = append(registers, register{id: 1000, description: "charging_state", value: 0})
 	registers = append(registers, register{id: 1004, description: "cable_state", value: 0})
 	registers = append(registers, register{id: 1006, description: "error_code", value: 0})
 	registers = append(registers, register{id: 1014, description: "serial_number", value: 0})
@@ -159,7 +159,7 @@ func initRegisters() {
 	registers = append(registers, register{id: 1100, description: "max_charging_current_mAh", value: 0})
 	registers = append(registers, register{id: 1110, description: "max_supported_current_mAh", value: 0})
 	//registers = append(registers, register{id: 1502 ,description: "rfid_card", value: 0})
-	registers = append(registers, register{id: 1502, description: "charged_energy", value: 0})
+	registers = append(registers, register{id: 1502, description: "charged_energy_Wh", value: 0})
 
 	registers = append(registers, register{id: 1008, description: "charging_current_phase_1_mAh", value: 0})
 	registers = append(registers, register{id: 1010, description: "charging_current_phase_2_mAh", value: 0})
@@ -205,7 +205,7 @@ func main() {
 				case 1110:
 					maxSupportedCurrentMAh.Set(float64(register.value))
 				case 1502:
-					chargedEnergy.Set(float64(register.value))
+					chargedEnergyWh.Set(float64(register.value) / 10)
 				case 1008:
 					chargingCurrentPhase1MAh.Set(float64(register.value))
 				case 1010:
@@ -260,7 +260,7 @@ func initPrometheusRegisters() {
 	prometheus.MustRegister(powerFactorPercent)
 	prometheus.MustRegister(maxChargingCurrentMAh)
 	prometheus.MustRegister(maxSupportedCurrentMAh)
-	prometheus.MustRegister(chargedEnergy)
+	prometheus.MustRegister(chargedEnergyWh)
 	prometheus.MustRegister(chargingCurrentPhase1MAh)
 	prometheus.MustRegister(chargingCurrentPhase2MAh)
 	prometheus.MustRegister(chargingCurrentPhase3MAh)
