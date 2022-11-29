@@ -273,7 +273,7 @@ func initPrometheusRegisters() {
 func initEnvironmentVariables() {
 
 	log.Info().Msg("Usage:")
-	log.Info().Str("wallboxPort", "This is an IP or a servername.").Msg("Mandatory environment parameter.")
+	log.Info().Str("wallboxName", "This is an IP or a servername.").Msg("Mandatory environment parameter.")
 	log.Info().Str("wallboxPort", strconv.Itoa(modbusclient.MODBUS_PORT)).Msg("Optional: The port TCP/modbus listens.")
 	log.Info().Str("debug", "false").Msg("Optional: Use debug mode for logging (true | false ). ")
 
