@@ -27,19 +27,19 @@ You find a default Grafana board here: https://grafana.com/grafana/dashboards/14
 #### Mandatory
 Set the mandatory environment variable (This example is Linux based);
 
-```go
+```
 export wallboxPort=<IP or servername of your wallbox, e.g. 192.168.08.15>
 ```
 
 #### Optional
 Set the optional environment variables (This example is Linux based);
 
-```go
+```
 export wallboxPort=<Port on which your TCP/modbus listens. Default is 502>
 ```
 
 #### Call on console
-```go
+```
 keba-prometheus
 ```
 
@@ -47,7 +47,7 @@ keba-prometheus
 
 ### How to build your own version ?
 
-```go
+```
 GOOS=windows GOARCH=amd64 go build -o ./bin/keba-prometheus.exe keba-prometheus.go
 GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o ./bin/keba-prometheus.linux keba-prometheus.go
 ```
