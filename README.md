@@ -22,6 +22,10 @@ Open in a browser the URL with your servername and the metric port.
 ## Grafana Integration
 You find a default Grafana board here: https://grafana.com/grafana/dashboards/14121
 
+## Docker image
+You find an image here: https://hub.docker.com/repository/docker/pbdger/keba-prometheus
+
+
 ## Core binary usage
 ###Prerequisites
 #### Mandatory
