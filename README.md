@@ -3,21 +3,23 @@ Provides Prometheus Metric for a Keba Wallbox as container image.
 
 ### How to start ?
 Start your container binding the external port 8080.
-
-> docker run -d --name=kebametrics -p 8080:8080 --env wallboxName=<your wallbox ip> pbdger/keba-prometheus
-
+```
+docker run -d --name=kebametrics -p 8080:8080 --env wallboxName=<your wallbox ip> pbdger/keba-prometheus
+```
 Try it out.
 
 ### How to get metrics ?
 
 Open in a browser the URL with your servername and the metric port.
-
-> http://localhost:8080/metrics
-
+```
+http://localhost:8080/metrics
+```
 ### Additional optional environment parameters
-> debug: true | false
 
-> wallboxPort: number, default is 502 
+```
+debug: true | false
+wallboxPort: number, default is 502 
+```
 
 ## Grafana Integration
 You find a default Grafana board here: https://grafana.com/grafana/dashboards/14121
@@ -27,7 +29,7 @@ You find an image here: https://hub.docker.com/repository/docker/pbdger/keba-pro
 
 
 ## Core binary usage
-###Prerequisites
+
 #### Mandatory
 Set the mandatory environment variable (This example is Linux based);
 
