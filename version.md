@@ -1,6 +1,9 @@
 # Version history
 
-github.com/prometheus/client_model### 1.1.2
+### 1.1.3
+golang.org/x/sys updated
+
+### 1.1.2
 github.com/prometheus/client_model updated.
 
 ### 1.1.1
