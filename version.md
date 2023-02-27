@@ -1,5 +1,8 @@
 # Version history
 
+github.com/prometheus/client_model### 1.1.2
+github.com/prometheus/client_model updated.
+
 ### 1.1.1
 Documentation fixed.
 
