@@ -1,5 +1,8 @@
 # Version history
 
+### 1.1.4
+Versions updated to fix security issue on github.com/prometheus/client_golang
+
 ### 1.1.3
 golang.org/x/sys updated
 
