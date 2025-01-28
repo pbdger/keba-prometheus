@@ -18,5 +18,5 @@ require (
 	github.com/prometheus/procfs v0.7.3 // indirect
 	github.com/tarm/goserial v0.0.0-20151007205400-b3440c3c6355 // indirect
 	golang.org/x/sys v0.5.0 // indirect
-	google.golang.org/protobuf v1.26.0 // indirect
+	google.golang.org/protobuf v1.33.0 // indirect
 )
